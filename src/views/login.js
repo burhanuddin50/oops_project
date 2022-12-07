@@ -4,7 +4,7 @@ import Logo from '../images/logo.jpg'
 import '../index.css';
 import { useState } from 'react'; 
 import Error from './error';
-import {GoogleLogin} from 'react-google-login';
+import axios from 'axios';
 const Login = () => {
   const [email, setemail] = useState('');
   const [password, setpassword] = useState('');
@@ -14,16 +14,20 @@ const Login = () => {
   const handleChange1 = event => {
     setpassword(event.target.value);
   };
-  //if(true)
-  let link="/main";
-  const responseGoogle=(response)=>{
-     console.log(response); 
-     link="/main";
-  }
-  const failGoogle=(response)=>{
-    console.log(response);
-    link="";
-  }
+  let link;
+  if(true)
+  link="/main";
+  if(email==="f20212905@hyderabad.bits-pilani.ac.in")
+  link="/admin";
+  if(email==="f20212771@hyderabad.bits-pilani.ac.in")
+  link="/manager";
+  const api=axios.create({
+    baseURL:'http://localhost:8080/customer'
+  });
+  api.get(`/${email}`).then(res=>{
+    console.log(res);
+  })
+     
   return (
     <>
         <Navbar />
@@ -34,12 +38,12 @@ const Login = () => {
               <img className="mx-auto w-44 border-solid border-black border-2 rounded-full" src={Logo} alt="" />
               <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Sign in to your account</h2>
             </div>
-            <form className="mt-8 space-y-6" action="#" method="POST">
+            <form className="mt-8 space-y-6" action="/main" >
               <input type="hidden" name="remember" defaultValue="true" />
               <div className="-space-y-px rounded-md shadow-sm">
                 <div>
-                  <label htmlFor="email-address" className="sr-only" >Email address</label>
-                  <input id="email-address" name="email" value={email} onInput={handleChange} type="email" autoComplete="email" required className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm" placeholder="Email address" />
+                  <label htmlFor="email-address" className="sr-only" >User Name</label>
+                  <input id="email-address" name="email" value={email} onInput={handleChange} type="username" autoComplete="" required className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm" placeholder="User Name" />
                 </div>
                 <div>
                   <label htmlFor="password" className="sr-only">Password</label>
@@ -55,13 +59,7 @@ const Login = () => {
                   <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
                 </div>
               </div>
-              <GoogleLogin
-                   clientId="883345413583-m1ks98ncm5bfn10de23q96r0upbfutd1.apps.googleusercontent.com"
-                   buttonText="Login with Google"
-                   onSuccess={responseGoogle}
-                   onFailure={failGoogle}
-                   cookiePolicy="single_host_origin"
-                   />
+              
               <div>
                 <button type="submit" className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                 <div>
@@ -72,7 +70,6 @@ const Login = () => {
                     </svg>
                   </span>
                   <a href={link} >Sign in</a>
-                  
                   </div>
                 </button>
                 <div className="text-sm m-2 my-3">
